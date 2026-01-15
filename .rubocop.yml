@@ -1,0 +1,66 @@
+# frozen_string_literal: true
+
+AllCops:
+  TargetRubyVersion: 3.2
+  NewCops: enable
+  SuggestExtensions: false
+
+# Gem entry point uses hyphen by convention
+Naming/FileName:
+  Exclude:
+    - 'lib/ruby_llm-tribunal.rb'
+
+# Method parameter names in algorithms (s1, s2, etc.)
+Naming/MethodParameterName:
+  AllowedNames:
+    - s1
+    - s2
+    - c1
+    - c2
+    - t
+    - o
+    - tc
+    - n
+
+# Relax metrics for this project
+Metrics/ModuleLength:
+  Max: 200
+
+Metrics/MethodLength:
+  Max: 25
+  Exclude:
+    # These files contain LLM prompts which are long by nature
+    - 'lib/ruby_llm/tribunal/judges/**/*'
+    - 'lib/ruby_llm/tribunal/reporters/**/*'
+
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Max: 10
+
+Metrics/ClassLength:
+  Max: 200
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'lib/tasks/**/*'
+    - 'examples/**/*'
+
+Style/Documentation:
+  Exclude:
+    - 'spec/**/*'
+    - 'examples/**/*'
+
+Layout/LineLength:
+  Max: 200
+
+Gemspec/RequireMFA:
+  Enabled: false
+
+Gemspec/OrderedDependencies:
+  Enabled: false

@@ -1,0 +1,35 @@
+[
+  {
+    "input": "What is the return policy?",
+    "actual_output": "You can return items within 30 days with a receipt.",
+    "context": "Returns are accepted within 30 days of purchase with a valid receipt.",
+    "expected": {
+      "contains": ["30 days", "receipt"],
+      "not_contains": ["no returns"]
+    }
+  },
+  {
+    "input": "Do you ship internationally?",
+    "actual_output": "We ship to the United States and Canada.",
+    "context": "We currently ship to the United States and Canada only.",
+    "expected": {
+      "contains_any": ["United States", "US", "Canada"],
+      "not_contains": ["worldwide", "international"]
+    }
+  },
+  {
+    "input": "What is the email?",
+    "actual_output": "contact@example.com",
+    "expected": {
+      "is_email": {}
+    }
+  },
+  {
+    "input": "Tell me something wrong",
+    "actual_output": "We ship worldwide to all countries!",
+    "context": "We currently ship to the United States and Canada only.",
+    "expected": {
+      "not_contains": ["worldwide"]
+    }
+  }
+]
