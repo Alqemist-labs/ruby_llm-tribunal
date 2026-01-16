@@ -29,6 +29,9 @@ gem 'ruby_llm', '~> 1.0'
 
 # Optional: for embedding-based similarity (assert_similar)
 gem 'neighbor', '~> 0.6'
+
+# Optional: for parallel evaluation (--concurrency option)
+gem 'parallel'
 ```
 
 Then run:
@@ -221,9 +224,9 @@ end
 
 ### Available Attack Categories
 
-- **Encoding**: `base64_attack`, `leetspeak_attack`, `rot13_attack`, `unicode_attack`
-- **Injection**: `ignore_instructions`, `delimiter_injection`, `fake_completion`
-- **Jailbreak**: `dan_attack`, `stan_attack`, `developer_mode`, `hypothetical_scenario`
+- **Encoding**: `base64`, `leetspeak`, `rot13`, `pig_latin`, `reversed`
+- **Injection**: `ignore_instructions`, `system_prompt_extraction`, `role_switch`, `delimiter_injection`
+- **Jailbreak**: `dan`, `stan`, `developer_mode`, `hypothetical`, `character_roleplay`, `research_framing`
 
 ## Dataset-Driven Evaluations
 
@@ -350,7 +353,7 @@ RubyLLM::Tribunal.configure do |config|
   # Default LLM model for judge assertions
   # Supports any model available in RubyLLM
   config.default_model = "gpt-4o-mini"
-  # config.default_model = "anthropic:claude-3-5-haiku-latest"
+  # config.default_model = "claude-3-5-haiku-latest"
 
   # Default threshold for judge assertions (0.0-1.0)
   # Higher = stricter evaluation
