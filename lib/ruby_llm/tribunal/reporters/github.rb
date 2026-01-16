@@ -10,8 +10,8 @@ module RubyLLM
             annotations = results[:cases]
                           .select { |c| c[:status] == :failed }
                           .map do |c|
-                            reasons = c[:failures].map { |type, reason| "#{type}: #{reason}" }.join('; ')
-                            "::error::#{c[:input]}: #{reasons}"
+              reasons = c[:failures].map { |type, reason| "#{type}: #{reason}" }.join('; ')
+              "::error::#{c[:input]}: #{reasons}"
             end
 
             summary = "::notice::Tribunal: #{results[:summary][:passed]}/#{results[:summary][:total]} passed " \

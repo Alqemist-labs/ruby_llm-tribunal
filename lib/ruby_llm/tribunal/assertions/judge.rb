@@ -142,6 +142,7 @@ module RubyLLM
                      when 'no' then negative_metric
                      when 'partial'
                        return [:fail, details] unless score.is_a?(Numeric)
+
                        # For negative metrics (toxicity, hallucination, etc.), high score = bad
                        # So we invert the comparison: pass if score is LOW enough
                        negative_metric ? score <= (1.0 - threshold) : score >= threshold

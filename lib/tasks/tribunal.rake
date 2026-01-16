@@ -140,7 +140,7 @@ namespace :tribunal do
         end
       rescue LoadError
         warn "Warning: 'parallel' gem not installed, falling back to sequential execution."
-        warn "  Install with: gem install parallel"
+        warn '  Install with: gem install parallel'
         cases.map { |test_case, assertions| run_case(test_case, assertions, provider) }
       end
     else
