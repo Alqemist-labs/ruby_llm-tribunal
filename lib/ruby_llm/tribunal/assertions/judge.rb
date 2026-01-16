@@ -140,7 +140,11 @@ module RubyLLM
             passed = case verdict
                      when 'yes' then !negative_metric
                      when 'no' then negative_metric
-                     when 'partial' then score.is_a?(Numeric) && score >= threshold
+                     when 'partial'
+                       return [:fail, details] unless score.is_a?(Numeric)
+                       # For negative metrics (toxicity, hallucination, etc.), high score = bad
+                       # So we invert the comparison: pass if score is LOW enough
+                       negative_metric ? score <= (1.0 - threshold) : score >= threshold
                      end
 
             passed ? [:pass, details] : [:fail, details]

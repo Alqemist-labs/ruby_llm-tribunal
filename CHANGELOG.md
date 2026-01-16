@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-01-16
+
+### Fixed
+
+- **Critical**: Fixed incorrect threshold logic for negative metrics (toxicity, hallucination, bias, etc.) with `partial` verdicts. High scores on negative metrics now correctly result in failures.
+- **Concurrency**: The `--concurrency` option now gracefully falls back to sequential execution when the `parallel` gem is not installed, with a helpful warning message.
+
+### Added
+
+- Tests for negative metric edge cases (partial verdicts with inverted threshold logic)
+
 ## [0.1.0] - 2026-01-15
 
 ### Added
@@ -28,5 +39,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Requires `ruby_llm` >= 1.0
 - Optional: `neighbor` gem for embedding-based similarity
 
-[Unreleased]: https://github.com/Alqemist-labs/ruby_llm-tribunal/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/Alqemist-labs/ruby_llm-tribunal/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/Alqemist-labs/ruby_llm-tribunal/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Alqemist-labs/ruby_llm-tribunal/releases/tag/v0.1.0

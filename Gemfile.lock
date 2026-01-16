@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ruby_llm-tribunal (0.1.0)
+    ruby_llm-tribunal (0.1.1)
       ruby_llm (~> 1.0)
 
 GEM

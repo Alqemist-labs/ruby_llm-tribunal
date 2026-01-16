@@ -192,6 +192,109 @@ RSpec.describe RubyLLM::Tribunal::Assertions::Judge do
       end
     end
 
+    context 'with partial verdict on negative metrics' do
+      it 'inverts threshold logic for negative metrics like toxicity' do
+        test_case = RubyLLM::Tribunal::TestCase.new(
+          input: 'Test',
+          actual_output: 'Output'
+        )
+
+        # High score (0.9) on toxicity = very toxic = should FAIL
+        client_high_score = mock_client.call([:ok, {
+                                               'verdict' => 'partial',
+                                               'score' => 0.9,
+                                               'reason' => 'Highly toxic content'
+                                             }])
+
+        result = described_class.evaluate(:toxicity, test_case, threshold: 0.8, llm: client_high_score)
+        expect(result.first).to eq(:fail)
+
+        # Low score (0.1) on toxicity = not toxic = should PASS
+        client_low_score = mock_client.call([:ok, {
+                                              'verdict' => 'partial',
+                                              'score' => 0.1,
+                                              'reason' => 'Minor concerns'
+                                            }])
+
+        result = described_class.evaluate(:toxicity, test_case, threshold: 0.8, llm: client_low_score)
+        expect(result.first).to eq(:pass)
+      end
+
+      it 'inverts threshold logic for hallucination metric' do
+        test_case = RubyLLM::Tribunal::TestCase.new(
+          input: 'Test',
+          actual_output: 'Output',
+          context: ['Context']
+        )
+
+        # High score (0.8) on hallucination = severe hallucination = should FAIL
+        client_high_score = mock_client.call([:ok, {
+                                               'verdict' => 'partial',
+                                               'score' => 0.8,
+                                               'reason' => 'Significant hallucination'
+                                             }])
+
+        result = described_class.evaluate(:hallucination, test_case, threshold: 0.8, llm: client_high_score)
+        expect(result.first).to eq(:fail)
+
+        # Low score (0.15) on hallucination = minimal = should PASS with threshold 0.8
+        # (passes if score <= 1.0 - 0.8 = 0.2)
+        client_low_score = mock_client.call([:ok, {
+                                              'verdict' => 'partial',
+                                              'score' => 0.15,
+                                              'reason' => 'Minor inaccuracy'
+                                            }])
+
+        result = described_class.evaluate(:hallucination, test_case, threshold: 0.8, llm: client_low_score)
+        expect(result.first).to eq(:pass)
+      end
+
+      it 'handles edge case at threshold boundary for negative metrics' do
+        test_case = RubyLLM::Tribunal::TestCase.new(
+          input: 'Test',
+          actual_output: 'Output'
+        )
+
+        # Score below boundary should pass
+        # For negative metrics: pass if score <= (1.0 - threshold)
+        # With threshold 0.8: pass if score <= ~0.2
+        client_below = mock_client.call([:ok, {
+                                          'verdict' => 'partial',
+                                          'score' => 0.19,
+                                          'reason' => 'Below boundary'
+                                        }])
+
+        result = described_class.evaluate(:toxicity, test_case, threshold: 0.8, llm: client_below)
+        expect(result.first).to eq(:pass)
+
+        # Score above boundary (0.25 with threshold 0.8) should fail
+        client_above = mock_client.call([:ok, {
+                                          'verdict' => 'partial',
+                                          'score' => 0.25,
+                                          'reason' => 'Above boundary'
+                                        }])
+
+        result = described_class.evaluate(:toxicity, test_case, threshold: 0.8, llm: client_above)
+        expect(result.first).to eq(:fail)
+      end
+
+      it 'handles partial verdict with non-numeric score' do
+        test_case = RubyLLM::Tribunal::TestCase.new(
+          input: 'Test',
+          actual_output: 'Output'
+        )
+
+        client = mock_client.call([:ok, {
+                                    'verdict' => 'partial',
+                                    'score' => nil,
+                                    'reason' => 'No score provided'
+                                  }])
+
+        result = described_class.evaluate(:toxicity, test_case, llm: client)
+        expect(result.first).to eq(:fail)
+      end
+    end
+
     context 'with LLM errors' do
       it 'handles errors gracefully' do
         test_case = RubyLLM::Tribunal::TestCase.new(

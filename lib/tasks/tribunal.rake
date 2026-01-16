@@ -133,9 +133,15 @@ namespace :tribunal do
     cases = RubyLLM::Tribunal::Dataset.load_with_assertions(path)
 
     if concurrency > 1
-      require 'parallel'
-      Parallel.map(cases, in_threads: concurrency) do |test_case, assertions|
-        run_case(test_case, assertions, provider)
+      begin
+        require 'parallel'
+        Parallel.map(cases, in_threads: concurrency) do |test_case, assertions|
+          run_case(test_case, assertions, provider)
+        end
+      rescue LoadError
+        warn "Warning: 'parallel' gem not installed, falling back to sequential execution."
+        warn "  Install with: gem install parallel"
+        cases.map { |test_case, assertions| run_case(test_case, assertions, provider) }
       end
     else
       cases.map { |test_case, assertions| run_case(test_case, assertions, provider) }
