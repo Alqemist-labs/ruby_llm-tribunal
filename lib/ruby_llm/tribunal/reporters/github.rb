@@ -7,9 +7,8 @@ module RubyLLM
       class GitHub
         class << self
           def format(results)
-            annotations = results[:cases]
-                          .select { |c| c[:status] == :failed }
-                          .map do |c|
+            failed_cases = results[:cases].select { |c| c[:status] == :failed }
+            annotations = failed_cases.map do |c|
               reasons = c[:failures].map { |type, reason| "#{type}: #{reason}" }.join('; ')
               "::error::#{c[:input]}: #{reasons}"
             end
