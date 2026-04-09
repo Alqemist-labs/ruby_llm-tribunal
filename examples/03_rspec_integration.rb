@@ -161,7 +161,7 @@ RSpec.describe 'Tribunal RSpec Integration' do
   # --------------------------------------------------------------------------
   # Pattern 2: LLM-as-judge assertions for semantic evaluation
   # --------------------------------------------------------------------------
-  describe 'LLM-as-judge assertions', if: ENV['OPENAI_API_KEY'] do
+  describe 'LLM-as-judge assertions', if: ENV.fetch('OPENAI_API_KEY', nil) do
     before(:all) do
       RubyLLM.configure do |config|
         config.openai_api_key = ENV.fetch('OPENAI_API_KEY')
